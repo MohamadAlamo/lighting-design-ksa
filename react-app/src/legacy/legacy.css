@@ -1,0 +1,154 @@
+/* Lifted verbatim from the original build — keyframes, resets, and the
+   hover rules that were style-hover attributes. Do not hand-edit values. */
+
+*{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    html.lenis,html.lenis body{height:auto}
+    .lenis.lenis-smooth{scroll-behavior:auto!important}
+    .lenis.lenis-stopped{overflow:hidden}
+    body{background:#14100c;color:#f1e9db;font-family:'Jost',sans-serif;font-weight:300;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    a{color:inherit;text-decoration:none}
+    a:focus-visible{outline:2px solid #d2ab6e;outline-offset:4px}
+    button:focus-visible{outline:2px solid #d2ab6e;outline-offset:3px}
+    @keyframes lumPulse{0%,100%{opacity:.3}50%{opacity:1}}
+    @keyframes lumBreathe{0%,100%{opacity:.6}50%{opacity:1}}
+    @keyframes lumBloom{0%{opacity:0;transform:scale(.5)}50%{opacity:1}100%{opacity:.85;transform:scale(1.02)}}
+    @keyframes lumMarkIn{from{opacity:0;transform:translateY(10px);letter-spacing:.5em}to{opacity:1;transform:translateY(0);letter-spacing:.3em}}
+    @keyframes lumLineGrow{from{width:0}to{width:120px}}
+    @keyframes lumSweep{to{transform:translateX(130%)}}
+    @keyframes lumDrift{0%,100%{opacity:.4;transform:translateX(-8%) rotate(16deg)}50%{opacity:.85;transform:translateX(8%) rotate(16deg)}}
+    @keyframes lumProg{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+    @keyframes pjSweep{0%{left:-45%;opacity:0}12%{opacity:1}100%{left:145%;opacity:0}}
+    @keyframes lampSway{0%,100%{transform:rotate(-1.1deg)}50%{transform:rotate(1.15deg)}}
+    @keyframes lampGlint{0%{background-position:145% 0;opacity:0}15%{opacity:0.9}85%{opacity:0.9}100%{background-position:-55% 0;opacity:0}}
+    @media (prefers-reduced-motion:reduce){
+      *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+      [data-lum-intro]{display:none!important}
+    }
+
+/* The original page had no Tailwind Preflight. Its `img{max-width:100%}` caps
+   the hero leaves to their container: each leaf is rotated ~90deg, so the img's
+   width is really its visual height and is meant to exceed the box it hangs in
+   (e.g. a 119px img in a 44px box). Capped, the leaf renders 16x45 instead of
+   42x122 and detaches from its wire. */
+[data-leaf] img{max-width:none}
+
+/* hover states */
+.lg0:hover{opacity:1 !important;border-bottom-color:#b3784a !important}
+.lg1:hover{opacity:1 !important;border-bottom-color:#b3784a !important}
+.lg2:hover{opacity:1 !important;border-bottom-color:#b3784a !important}
+.lg3:hover{opacity:1 !important;border-bottom-color:#b3784a !important}
+.lg4:hover{opacity:1 !important;border-bottom-color:#b3784a !important}
+.lg5:hover{opacity:1 !important;border-bottom-color:#b3784a !important}
+.lg6:hover{background:rgba(179,120,74,0.22) !important;letter-spacing:0.24em !important}
+.lg7:hover{background:rgba(179,120,74,0.22) !important;letter-spacing:0.24em !important}
+.lg8:hover{background:rgba(179,120,74,0.22) !important;letter-spacing:0.24em !important}
+.lg9:hover{background:rgba(179,120,74,0.25) !important;border-color:#b3784a !important}
+.lg10:hover{background:rgba(179,120,74,0.25) !important;border-color:#b3784a !important}
+.lg11:hover{background:#181310 !important}
+.lg12:hover{background:#181310 !important}
+.lg13:hover{transform:scale(1.045) !important}
+.lg14:hover{transform:scale(1.045) !important}
+.lg15:hover{transform:scale(1.045) !important}
+.lg16:hover{transform:scale(1.045) !important}
+.lg17:hover{transform:scale(1.045) !important}
+.lg18:hover{transform:scale(1.045) !important}
+.lg19:hover{transform:scale(1.045) !important}
+.lg20:hover{transform:scale(1.045) !important}
+.lg21:hover{color:#f1e9db !important}
+.lg22:hover{color:#f1e9db !important}
+.lg23:hover{color:#f1e9db !important}
+.lg24:hover{color:#f1e9db !important}
+.lg25:hover{color:#f1e9db !important}
+.lg26:hover{color:#f1e9db !important}
+.lg27:hover{background:rgba(179,120,74,0.18) !important;border-color:#b3784a !important}
+.lg28:hover{color:#f1e9db !important;border-bottom-color:#b3784a !important}
+.lg29:hover{border-color:#b3784a !important;background:rgba(179,120,74,0.12) !important}
+.lg30:hover{color:#f1e9db !important;border-bottom-color:#b3784a !important}
+.lg31:hover{border-color:#b3784a !important;background:rgba(179,120,74,0.12) !important}
+.lg32:hover{color:#f1e9db !important;border-bottom-color:#b3784a !important}
+.lg33:hover{border-color:#b3784a !important;background:rgba(179,120,74,0.12) !important}
+.lg34:hover{color:#f1e9db !important;border-bottom-color:#b3784a !important}
+.lg35:hover{border-color:#b3784a !important;background:rgba(179,120,74,0.12) !important}
+.lg36:hover{background:rgba(179,120,74,0.22) !important;letter-spacing:0.24em !important}
+.lg37:hover{color:#f1e9db !important;border-bottom-color:#d2ab6e !important}
+.lg38:hover{color:#f1e9db !important;border-bottom-color:#d2ab6e !important}
+.lg39:hover{color:#f1e9db !important;border-bottom-color:#d2ab6e !important}
+.lg40:hover{color:#d2ab6e !important}
+.lg41:hover{color:#d2ab6e !important}
+.lg42:hover{border-color:#d2ab6e !important;background:rgba(179,120,74,0.18) !important}
+.lg43:hover{border-color:#d2ab6e !important;background:rgba(179,120,74,0.18) !important}
+.lg44:hover{border-color:#d2ab6e !important;background:rgba(179,120,74,0.18) !important}
+.lg45:hover{border-color:#d2ab6e !important;background:rgba(179,120,74,0.18) !important}
+.lg46:hover{border-color:#d2ab6e !important;background:rgba(179,120,74,0.18) !important}
+.lg47:hover{border-color:#d2ab6e !important;background:rgba(179,120,74,0.18) !important}
+.lg48:hover{color:#f1e9db !important}
+.lg49:hover{color:#f1e9db !important}
+.lg50:hover{color:#f1e9db !important}
+.lg51:hover{color:#f1e9db !important}
+.lg52:hover{color:#f1e9db !important}
+.lg53:hover{color:#f1e9db !important}
+.lg54:hover{color:#f1e9db !important}
+.lg55:hover{color:#f1e9db !important}
+.lg56:hover{color:#f1e9db !important}
+.lg57:hover{color:#f1e9db !important;border-bottom-color:#d2ab6e !important}
+.lg58:hover{background:rgba(179,120,74,0.25) !important;border-color:#d2ab6e !important}
+.lg59:hover{background:rgba(179,120,74,0.3) !important;border-color:#d2ab6e !important}
+.lg60:hover{background:rgba(179,120,74,0.3) !important;border-color:#d2ab6e !important}
+.lg61:hover{background:rgba(179,120,74,0.4) !important}
+.lg62:hover{background:rgba(179,120,74,0.4) !important}
+.lg63:hover{background:rgba(179,120,74,0.3) !important}
+.lg64:hover{background:rgba(179,120,74,0.25) !important}
+.lg65:hover{background:rgba(179,120,74,0.35) !important;transform:translateY(-3px) !important;border-color:#d2ab6e !important}
+
+/* Slide 3 (Objets d'art) on narrow screens.
+   The desktop layout is side-by-side: copy left, objet panel absolutely
+   positioned in the right 48%. That panel used to be hidden outright below
+   1020px, which left the slide as text on empty space and dropped the whole
+   crystal carousel on phones. Here it restacks instead — objet above, copy
+   below, centred — mirroring how slide 1 stacks its pendant.
+   !important throughout because the markup carries inline styles. */
+/* Not enough vertical room to stack an objet above the copy — the panel clips
+   off the top and the copy runs under the hero controls. Fall back to the
+   original behaviour and hide it, as the old [data-xwide-only] rule did.
+   Wider viewports need more height because the headline still scales with vw. */
+@media (max-width:760px) and (max-height:639px),
+       (min-width:761px) and (max-width:1020px) and (max-height:899px){
+  [data-objets-panel]{display:none !important}
+}
+
+@media (max-width:760px) and (min-height:640px),
+       (min-width:761px) and (max-width:1020px) and (min-height:900px){
+  [data-objets-slide]{
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+    padding-top:clamp(88px,13vh,140px) !important;
+    padding-bottom:clamp(112px,16vh,196px) !important;
+  }
+  [data-objets-panel]{
+    position:relative !important;
+    top:auto !important;
+    bottom:auto !important;
+    right:auto !important;
+    width:min(76vw,340px) !important;
+    height:clamp(275px,38vh,380px) !important;
+    flex:none !important;
+    margin:0 auto 0.6rem !important;
+  }
+  /* Shrink the objet and lift it, so the caption and dots get their own band
+     at the foot of the panel instead of landing on top of the artwork. */
+  [data-objets-panel] [data-objet]{
+    top:34% !important;
+    width:min(50vw,200px) !important;
+  }
+  [data-objet-caps]{top:auto !important;bottom:2.5rem !important}
+  [data-objet-dots]{top:auto !important;bottom:0.1rem !important}
+  [data-objets-copy]{
+    max-width:34em !important;
+    margin:0 auto !important;
+  }
+  [data-objets-copy] p{margin-left:auto !important;margin-right:auto !important}
+  [data-objets-copy] [data-hero-el]:last-child{justify-content:center !important}
+}

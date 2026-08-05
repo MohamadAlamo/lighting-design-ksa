@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<title>Lighting Design</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0d0a07; --panel:#17110b; --line:rgba(176,162,141,0.18); --line2:rgba(176,162,141,0.32); --txt:#f1e9db; --mut:#b0a28d; --gold:#d2ab6e; --copper:#b3784a; --err:#e08a6a; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { -webkit-text-size-adjust:100%; }
+  body { background:var(--bg); color:var(--txt); font-family:'Tajawal',sans-serif; font-weight:300; line-height:1.7; min-height:100vh; }
+  a { color:var(--gold); text-decoration:none; }
+  a:hover { color:var(--txt); }
+  .wrap { max-width:720px; margin:0 auto; padding:clamp(1.2rem,4vw,3rem) clamp(1rem,4vw,2rem) 6rem; }
+  .brand { text-align:center; padding:2.2rem 0 1.6rem; border-bottom:1px solid var(--line); margin-bottom:2rem; }
+  .brand .en { font-family:Georgia,serif; font-size:1.05rem; letter-spacing:0.34em; color:var(--txt); text-transform:uppercase; }
+  .brand .diamond { display:inline-block; width:7px; height:7px; background:var(--gold); transform:rotate(45deg); margin:0.9rem auto 0; }
+  h1 { font-family:'Amiri',serif; font-weight:700; font-size:clamp(1.7rem,5vw,2.4rem); line-height:1.4; margin-bottom:0.8rem; }
+  .intro { color:var(--mut); font-size:0.98rem; margin-bottom:1.2rem; }
+  .notice { border:1px solid var(--line); background:var(--panel); padding:1rem 1.2rem; font-size:0.9rem; color:var(--mut); margin-bottom:2.2rem; }
+  .notice strong { color:var(--gold); font-weight:500; }
+  .notice ul { margin:0.4rem 1.2rem 0 0; }
+  fieldset { border:none; margin-bottom:2.4rem; }
+  legend { font-family:'Amiri',serif; font-size:1.35rem; color:var(--gold); margin-bottom:1.2rem; display:flex; align-items:center; gap:0.7rem; width:100%; }
+  legend::after { content:""; flex:1; height:1px; background:var(--line); }
+  .q { margin-bottom:1.5rem; }
+  .q label.t, .q .t { display:block; font-weight:500; font-size:1rem; margin-bottom:0.55rem; }
+  .req { color:var(--copper); }
+  .hint { display:block; font-size:0.82rem; color:var(--mut); margin-top:-0.35rem; margin-bottom:0.55rem; }
+  input[type=text], input[type=tel], input[type=url], input[type=number], textarea, select {
+    width:100%; background:var(--panel); border:1px solid var(--line2); color:var(--txt);
+    font-family:'Tajawal',sans-serif; font-weight:300; font-size:1rem; padding:0.85rem 1rem; border-radius:4px; outline:none; transition:border-color 0.3s;
+  }
+  input:focus, textarea:focus, select:focus { border-color:var(--gold); }
+  input[readonly] { color:var(--mut); background:#120d08; cursor:not-allowed; }
+  textarea { min-height:96px; resize:vertical; }
+  select { appearance:none; background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23b0a28d' fill='none' stroke-width='1.5'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:left 1rem center; padding-left:2.4rem; }
+  .opts { display:flex; flex-direction:column; gap:0.55rem; }
+  .opts.row { flex-direction:row; flex-wrap:wrap; gap:0.7rem; }
+  .opt { display:flex; align-items:center; gap:0.75rem; border:1px solid var(--line); background:var(--panel); padding:0.75rem 1rem; border-radius:4px; cursor:pointer; transition:border-color 0.3s, background 0.3s; font-size:0.97rem; }
+  .opt:hover { border-color:var(--line2); }
+  .opt input { position:absolute; opacity:0; pointer-events:none; }
+  .opt .dot { flex:none; width:16px; height:16px; border-radius:50%; border:1px solid var(--line2); display:grid; place-items:center; transition:border-color 0.3s; }
+  .opt .dot::after { content:""; width:8px; height:8px; border-radius:50%; background:var(--gold); transform:scale(0); transition:transform 0.25s; }
+  .opt.on { border-color:var(--gold); background:#1e1610; }
+  .opt.on .dot { border-color:var(--gold); }
+  .opt.on .dot::after { transform:scale(1); }
+  .follow { margin-top:0.9rem; padding-right:1rem; border-right:2px solid var(--gold); display:none; }
+  .follow.show { display:block; animation:fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
+  .up { border:1px dashed var(--line2); background:var(--panel); border-radius:6px; padding:1.1rem; display:flex; align-items:center; gap:1rem; cursor:pointer; transition:border-color 0.3s; position:relative; }
+  .up:hover { border-color:var(--gold); }
+  .up input { position:absolute; inset:0; opacity:0; cursor:pointer; }
+  .up .ic { flex:none; width:44px; height:44px; border:1px solid var(--line2); border-radius:6px; display:grid; place-items:center; color:var(--gold); font-size:1.3rem; overflow:hidden; }
+  .up .ic img { width:100%; height:100%; object-fit:cover; }
+  .up .tx { font-size:0.9rem; color:var(--mut); }
+  .up .tx b { display:block; color:var(--txt); font-weight:500; font-size:0.97rem; }
+  .up.ok { border-style:solid; border-color:rgba(210,171,110,0.55); }
+  .agree { display:flex; gap:0.8rem; align-items:flex-start; border:1px solid var(--line); background:var(--panel); padding:1rem 1.1rem; border-radius:4px; cursor:pointer; font-size:0.92rem; color:var(--mut); }
+  .agree input { margin-top:0.3rem; accent-color:var(--gold); width:17px; height:17px; flex:none; }
+  .err { color:var(--err); font-size:0.82rem; margin-top:0.4rem; display:none; }
+  .q.bad .err { display:block; }
+  .q.bad input[type=text], .q.bad input[type=tel], .q.bad input[type=url], .q.bad textarea, .q.bad select { border-color:var(--err); }
+  .q.bad .up { border-color:var(--err); }
+  button.submit { width:100%; font-family:'Tajawal',sans-serif; font-weight:500; font-size:1.05rem; letter-spacing:0.05em; color:var(--txt); background:linear-gradient(135deg, #8a5a33, var(--copper)); border:1px solid var(--gold); border-radius:4px; padding:1.05rem; cursor:pointer; transition:filter 0.3s; }
+  button.submit:hover { filter:brightness(1.15); }
+  button.submit:disabled { opacity:0.55; cursor:wait; }
+  .bar { height:3px; background:var(--line); border-radius:2px; overflow:hidden; margin-top:0.8rem; display:none; }
+  .bar i { display:block; height:100%; width:0%; background:var(--gold); transition:width 0.3s; }
+  .screen { text-align:center; padding:5rem 1rem; display:none; }
+  .screen .mark { width:74px; height:74px; margin:0 auto 1.6rem; border:1px solid var(--gold); border-radius:50%; display:grid; place-items:center; font-size:2rem; color:var(--gold); }
+  .screen h2 { font-family:'Amiri',serif; font-size:1.9rem; margin-bottom:0.7rem; }
+  .screen p { color:var(--mut); max-width:34em; margin:0 auto; }
+  footer { text-align:center; color:var(--mut); font-size:0.78rem; padding:2rem 0 1rem; border-top:1px solid var(--line); margin-top:3rem; }
+</style>
+</head>
+<body>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#17110b"/><rect x="30" y="30" width="40" height="52" rx="3" fill="none" stroke="#d2ab6e" stroke-width="2.5"/><path d="M38 44h24M38 52h24M38 60h14" stroke="#d2ab6e" stroke-width="2.5" stroke-linecap="round"/><path d="M58 66l5 5 9-10" stroke="#d2ab6e" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></template>
+<div class="wrap">
+  <div class="brand">
+    <img src="logo.png" alt="Lighting Design" style="height:58px;display:block;margin:0 auto 0.9rem">
+    <span class="diamond"></span>
+  </div>
+
+  <div id="gate" style="display:none; text-align:center; padding:4rem 1rem;">
+    <div class="mark" style="width:74px;height:74px;margin:0 auto 1.6rem;border:1px solid var(--copper);border-radius:50%;display:grid;place-items:center;font-size:2rem;color:var(--copper);">!</div>
+    <h2 style="font-family:'Amiri',serif;font-size:1.8rem;margin-bottom:0.7rem;" id="gateTitle">هذا الرابط غير صالح</h2>
+    <p style="color:var(--mut);max-width:32em;margin:0 auto;" id="gateMsg">يرجى التواصل مع مندوب المبيعات للحصول على رابط جديد.</p>
+  </div>
+
+  <form id="frm" novalidate>
+    <h1>نموذج التحقق من موقع التركيب</h1>
+    <p class="intro">حرصًا على إنجاز عملية التركيب في الموعد المحدد ودون أي تأخير، يرجى تعبئة النموذج وإرفاق الصور المطلوبة بدقة. تساعدنا هذه المعلومات على تجهيز فريق التركيب بالمعدات المناسبة والتأكد من جاهزية الموقع قبل الزيارة.</p>
+    <div class="notice">
+      <strong>⚠ مهم:</strong>
+      <ul>
+        <li>جميع الأسئلة إلزامية.</li>
+        <li>يرجى إرفاق الصور المطلوبة.</li>
+        <li>في حال كانت المعلومات غير صحيحة أو كان الموقع غير جاهز للتركيب، فقد يتم تأجيل الموعد.</li>
+      </ul>
+    </div>
+
+    <fieldset>
+      <legend>البيانات الأساسية</legend>
+      <div class="q" data-k="name"><label class="t" for="fName">الاسم الكامل <span class="req">*</span></label><input type="text" id="fName" autocomplete="name"><span class="err">يرجى إدخال الاسم الكامل</span></div>
+      <div class="q" data-k="phone"><label class="t" for="fPhone">رقم الجوال <span class="req">*</span></label><input type="tel" id="fPhone" inputmode="tel" placeholder="05XXXXXXXX" dir="ltr" style="text-align:right"><span class="err">يرجى إدخال رقم جوال صحيح (05XXXXXXXX)</span></div>
+      <div class="q" data-k="invoice"><label class="t" for="fInv">رقم الفاتورة أو الطلب <span class="req">*</span></label><input type="text" id="fInv"><span class="err">يرجى إدخال رقم الفاتورة</span></div>
+      <div class="q" data-k="city"><label class="t" for="fCity">المدينة <span class="req">*</span></label><input type="text" id="fCity"><span class="err">يرجى إدخال المدينة</span></div>
+      <div class="q" data-k="map">
+        <label class="t">موقع التركيب <span class="req">*</span></label>
+        <div class="opts row" data-radio="maptab" style="margin-bottom:0.7rem">
+          <label class="opt"><input type="radio" name="maptab" value="pin" checked><span class="dot"></span>تحديد الموقع على الخريطة</label>
+          <label class="opt"><input type="radio" name="maptab" value="link"><span class="dot"></span>لصق رابط من خرائط Google</label>
+        </div>
+        <div id="mapPane">
+          <span class="hint">اضغط على الخريطة لتثبيت موقع التركيب بدقة، أو استخدم زر «تحديد موقعي الحالي».</span>
+          <div id="pickMap" style="height:280px;border:1px solid var(--line2);border-radius:8px;margin-top:0.6rem;overflow:hidden"></div>
+          <div style="display:flex;gap:0.6rem;align-items:center;flex-wrap:wrap;margin-top:0.6rem">
+            <button type="button" id="geoBtn" style="background:none;border:1px solid var(--line2);color:var(--gold);font-family:'Tajawal',sans-serif;font-size:0.85rem;padding:0.55rem 1rem;border-radius:4px;cursor:pointer;">📍 تحديد موقعي الحالي</button>
+            <span id="pinState" style="font-size:0.85rem;color:var(--muted)">لم يتم تثبيت الموقع بعد</span>
+          </div>
+        </div>
+        <div id="linkPane" style="display:none">
+          <span class="hint">الصق رابط الموقع من تطبيق خرائط Google.</span>
+          <input type="url" id="fMap" dir="ltr" placeholder="https://maps.google.com/...">
+        </div>
+        <span class="err">يرجى تثبيت الموقع على الخريطة أو لصق الرابط</span>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>الكهرباء والتحكم</legend>
+      <div class="q" data-k="volt"><span class="t">نوع الكهرباء <span class="req">*</span></span>
+        <div class="opts row" data-radio="volt">
+          <label class="opt"><input type="radio" name="volt" value="110 فولت"><span class="dot"></span>110 فولت</label>
+          <label class="opt"><input type="radio" name="volt" value="220 فولت"><span class="dot"></span>220 فولت</label>
+        </div><span class="err">يرجى الاختيار</span>
+      </div>
+      <div class="q" data-k="point"><span class="t">هل توجد نقطة كهرباء جاهزة في مكان تركيب الإنارة؟ <span class="req">*</span></span>
+        <div class="opts row" data-radio="point">
+          <label class="opt"><input type="radio" name="point" value="نعم"><span class="dot"></span>نعم</label>
+          <label class="opt"><input type="radio" name="point" value="لا"><span class="dot"></span>لا</label>
+        </div><span class="err">يرجى الاختيار</span>
+      </div>
+      <div class="q" data-k="switch"><span class="t">ما نوع مفتاح الإضاءة الموجود في مكان التركيب؟ <span class="req">*</span></span>
+        <div class="opts" data-radio="switch">
+          <label class="opt"><input type="radio" name="switch" value="مفتاح عادي (تشغيل / إيقاف)"><span class="dot"></span>مفتاح عادي (تشغيل / إيقاف)</label>
+          <label class="opt"><input type="radio" name="switch" value="مفتاح ديمر (للتحكم بشدة الإضاءة)"><span class="dot"></span>مفتاح ديمر (للتحكم بشدة الإضاءة)</label>
+          <label class="opt"><input type="radio" name="switch" value="نظام منزل ذكي"><span class="dot"></span>نظام منزل ذكي</label>
+        </div><span class="err">يرجى الاختيار</span>
+        <div class="follow" id="fwDimmer">
+          <div class="q" data-k="dimmerType" style="margin-bottom:0;"><label class="t" for="fDimmer">ما هو نوع الديمر؟ <span class="req">*</span></label><input type="text" id="fDimmer" placeholder="الشركة / الموديل إن وجد"><span class="err">يرجى إدخال نوع الديمر</span></div>
+        </div>
+        <div class="follow" id="fwSmart">
+          <div class="q" data-k="smartSys" style="margin-bottom:0;"><label class="t" for="fSmart">ما هو اسم نظام المنزل الذكي؟ <span class="req">*</span></label>
+            <select id="fSmart"><option value="">— اختر النظام —</option><option>KNX</option><option>Control4</option><option>Lutron</option><option>Fibaro</option><option>Tuya</option><option>Smart Life</option><option>Home Assistant</option><option>أخرى</option></select>
+            <span class="err">يرجى اختيار النظام</span></div>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>السقف والموقع</legend>
+      <div class="q" data-k="ceiling"><span class="t">نوع السقف <span class="req">*</span></span>
+        <div class="opts row" data-radio="ceiling">
+          <label class="opt"><input type="radio" name="ceiling" value="جبس بورد"><span class="dot"></span>جبس بورد</label>
+          <label class="opt"><input type="radio" name="ceiling" value="خرسانة (أسمنت)"><span class="dot"></span>خرسانة (أسمنت)</label>
+          <label class="opt"><input type="radio" name="ceiling" value="خشب"><span class="dot"></span>خشب</label>
+          <label class="opt"><input type="radio" name="ceiling" value="أخرى"><span class="dot"></span>أخرى</label>
+        </div><span class="err">يرجى الاختيار</span>
+        <div class="follow" id="fwCeil">
+          <div class="q" data-k="ceilingOther" style="margin-bottom:0;"><label class="t" for="fCeilO">حدد نوع السقف <span class="req">*</span></label><input type="text" id="fCeilO"><span class="err">يرجى التحديد</span></div>
+        </div>
+      </div>
+      <div class="q" data-k="height"><label class="t" for="fH">ارتفاع السقف (بالمتر) <span class="req">*</span></label><input type="number" id="fH" inputmode="decimal" step="0.1" min="1" max="30" placeholder="مثال: 3.2" dir="ltr" style="text-align:right"><span class="err">يرجى إدخال الارتفاع</span></div>
+      <div class="q" data-k="finishing"><span class="t">هل يوجد أعمال تشطيب أو دهان أو صيانة مازالت قائمة؟ <span class="req">*</span></span>
+        <div class="opts row" data-radio="finishing"><label class="opt"><input type="radio" name="finishing" value="نعم"><span class="dot"></span>نعم</label><label class="opt"><input type="radio" name="finishing" value="لا"><span class="dot"></span>لا</label></div><span class="err">يرجى الاختيار</span>
+      </div>
+      <div class="q" data-k="obstacle"><span class="t">هل يوجد أي عائق قد يمنع أو يصعب عملية التركيب؟ <span class="req">*</span></span>
+        <div class="opts row" data-radio="obstacle"><label class="opt"><input type="radio" name="obstacle" value="نعم"><span class="dot"></span>نعم</label><label class="opt"><input type="radio" name="obstacle" value="لا"><span class="dot"></span>لا</label></div><span class="err">يرجى الاختيار</span>
+      </div>
+      <div class="q" data-k="ladder"><span class="t">هل يحتاج الفني إلى سلم طويل أو معدات خاصة للوصول لمكان التركيب؟ <span class="req">*</span></span>
+        <div class="opts row" data-radio="ladder"><label class="opt"><input type="radio" name="ladder" value="نعم"><span class="dot"></span>نعم</label><label class="opt"><input type="radio" name="ladder" value="لا"><span class="dot"></span>لا</label></div><span class="err">يرجى الاختيار</span>
+      </div>
+      <div class="q" data-k="notes"><label class="t" for="fNotes">هل توجد أي معلومات تود إبلاغ فريق التركيب بها؟ <span class="req">*</span></label><textarea id="fNotes" placeholder="اكتب &quot;لا يوجد&quot; إن لم يكن هناك شيء"></textarea><span class="err">يرجى الإجابة (اكتب «لا يوجد» إن لم يكن هناك شيء)</span></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>الصور المطلوبة</legend>
+      <div class="q" data-k="ph1">
+        <span class="t">صورة كاملة لمكان التركيب <span class="req">*</span></span>
+        <span class="hint">بحيث يظهر المكان بالكامل — صورة واحدة، بحد أقصى 10MB.</span>
+        <label class="up" id="up1"><input type="file" accept="image/*" id="f1"><span class="ic">📷</span><span class="tx"><b>اضغط لاختيار الصورة</b>أو التقط صورة الآن</span></label>
+        <span class="err">الصورة مطلوبة (حد أقصى 10MB)</span>
+      </div>
+      <div class="q" data-k="ph2">
+        <span class="t">صورة السقف <span class="req">*</span></span>
+        <span class="hint">حتى يتمكن فريقنا من معرفة نوع السقف وطريقة التركيب المناسبة.</span>
+        <label class="up" id="up2"><input type="file" accept="image/*" id="f2"><span class="ic">📷</span><span class="tx"><b>اضغط لاختيار الصورة</b>أو التقط صورة الآن</span></label>
+        <span class="err">الصورة مطلوبة (حد أقصى 10MB)</span>
+      </div>
+      <div class="q" data-k="ph3">
+        <span class="t">صورة لنقطة الكهرباء <span class="req">*</span></span>
+        <span class="hint">مع التأكد من وضوح نقطة التغذية الكهربائية.</span>
+        <label class="up" id="up3"><input type="file" accept="image/*" id="f3"><span class="ic">📷</span><span class="tx"><b>اضغط لاختيار الصورة</b>أو التقط صورة الآن</span></label>
+        <span class="err">الصورة مطلوبة (حد أقصى 10MB)</span>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>الإقرار</legend>
+      <div class="q" data-k="agree">
+        <label class="agree"><input type="checkbox" id="fAgree"><span>أقر بأن جميع المعلومات والصور المرفقة صحيحة، وأتفهم أنه في حال وجود اختلاف بين المعلومات المقدمة والواقع، فقد يتم تأجيل موعد التركيب حسب الحالة.</span></label>
+        <span class="err">يجب الموافقة على الإقرار</span>
+      </div>
+    </fieldset>
+
+    <button type="submit" class="submit" id="btnGo">إرسال النموذج</button>
+    <div class="bar" id="bar"><i></i></div>
+  </form>
+
+  <div class="screen" id="done">
+    <div class="mark">✓</div>
+    <h2>تم إرسال النموذج بنجاح</h2>
+    <p>شكرًا لتعاونكم. استلم فريق التركيب بياناتكم وسيتواصل معكم لتأكيد الموعد.</p>
+    <p id="cnt" style="margin-top:1.2rem;font-size:0.85rem;opacity:0.7">سيتم نقلك إلى موقعنا خلال <b id="cntN">6</b> ثوانٍ…</p>
+    <a href="https://lightingdesign-ksa.com/" style="display:inline-block;margin-top:0.6rem;padding:0.85rem 2rem;border:1px solid #b3784a;color:#f1e9db;background:rgba(179,120,74,0.08);text-decoration:none;letter-spacing:0.12em;font-size:0.85rem">زيارة الموقع الآن</a>
+  </div>
+
+  <footer>Lighting Design — Al Khobar &amp; Riyadh · +966 54 053 7677</footer>
+</div>
+
+<script>
+(function () {
+  var API = '/api/';
+  var qs = new URLSearchParams(location.search);
+  var TOKEN = qs.get('t') || '';
+  var DEMO = qs.get('demo') === '1' || (!TOKEN && (location.protocol === 'file:' || /\.dev|localhost|127\.0\.0\.1|omelette|anthropic/.test(location.host)));
+  var frm = document.getElementById('frm'), gate = document.getElementById('gate'), done = document.getElementById('done');
+  var $ = function (id) { return document.getElementById(id); };
+
+  function showGate(title, msg) { frm.style.display = 'none'; gate.style.display = 'block'; $('gateTitle').textContent = title; $('gateMsg').textContent = msg; }
+
+  // ---- token gate ----
+  if (!DEMO) {
+    if (!TOKEN) { showGate('هذا الرابط غير صالح', 'يرجى التواصل مع مندوب المبيعات للحصول على رابط جديد.'); }
+    else {
+      fetch(API + 'token/' + encodeURIComponent(TOKEN)).then(function (r) { return r.json(); }).then(function (d) {
+        if (!d.ok) { showGate(d.used ? 'تم إرسال هذا النموذج مسبقًا' : 'هذا الرابط غير صالح', d.used ? 'هذا الرابط استُخدم من قبل. إذا كنت بحاجة لتعبئة نموذج جديد، تواصل مع مندوب المبيعات.' : 'يرجى التواصل مع مندوب المبيعات للحصول على رابط جديد.'); return; }
+        if (d.phone) { $('fPhone').value = d.phone; $('fPhone').readOnly = true; }
+        if (d.invoice) { $('fInv').value = d.invoice; $('fInv').readOnly = true; }
+      }).catch(function () { /* server unreachable: leave form usable; submit will fail visibly */ });
+    }
+  }
+
+  // ---- radio visuals + conditionals ----
+  Array.prototype.forEach.call(document.querySelectorAll('.opt input'), function (inp) {
+    inp.addEventListener('change', function () {
+      var group = inp.closest('[data-radio]');
+      Array.prototype.forEach.call(group.querySelectorAll('.opt'), function (o) { o.classList.toggle('on', o.querySelector('input').checked); });
+      if (inp.name === 'switch') {
+        $('fwDimmer').classList.toggle('show', inp.value.indexOf('ديمر') > -1);
+        $('fwSmart').classList.toggle('show', inp.value.indexOf('ذكي') > -1);
+      }
+      if (inp.name === 'ceiling') { $('fwCeil').classList.toggle('show', inp.value === 'أخرى'); }
+      inp.closest('.q').classList.remove('bad');
+    });
+  });
+
+  // ---- uploads ----
+  var MAXB = 10 * 1024 * 1024;
+  ['1', '2', '3'].forEach(function (n) {
+    $('f' + n).addEventListener('change', function () {
+      var f = this.files[0], up = $('up' + n), q = up.closest('.q');
+      if (!f) return;
+      if (f.size > MAXB) { this.value = ''; q.classList.add('bad'); q.querySelector('.err').textContent = 'حجم الصورة أكبر من 10MB — اختر صورة أصغر'; return; }
+      q.classList.remove('bad');
+      up.classList.add('ok');
+      var ic = up.querySelector('.ic'); ic.innerHTML = '';
+      var img = document.createElement('img'); img.src = URL.createObjectURL(f); ic.appendChild(img);
+      up.querySelector('.tx').innerHTML = '<b>تم اختيار الصورة ✓</b>' + (f.name.length > 30 ? f.name.slice(0, 27) + '…' : f.name);
+    });
+  });
+
+  // ---- location: map pin + link paste ----
+  var pickMap = null, pin = null;
+  function setPin(lat, lng, fly) {
+    var v = 'https://maps.google.com/?q=' + lat.toFixed(6) + ',' + lng.toFixed(6);
+    $('fMap').value = v;
+    var q = document.querySelector('[data-k="map"]');
+    if (q) q.classList.remove('bad');
+    $('pinState').innerHTML = 'تم تثبيت الموقع ✓ <span dir="ltr" style="color:var(--gold)">' + lat.toFixed(4) + ', ' + lng.toFixed(4) + '</span>';
+    if (pickMap) {
+      if (!pin) pin = L.marker([lat, lng]).addTo(pickMap);
+      else pin.setLatLng([lat, lng]);
+      if (fly) pickMap.setView([lat, lng], Math.max(pickMap.getZoom(), 15));
+    }
+  }
+  function initMap() {
+    if (pickMap || typeof L === 'undefined') return;
+    pickMap = L.map('pickMap', { attributionControl: false }).setView([25.6, 48.3], 5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(pickMap);
+    pickMap.on('click', function (e) { setPin(e.latlng.lat, e.latlng.lng, false); });
+    setTimeout(function () { pickMap.invalidateSize(); }, 120);
+  }
+  initMap();
+  window.addEventListener('resize', function () { if (pickMap) pickMap.invalidateSize(); });
+  setTimeout(function () { if (pickMap) pickMap.invalidateSize(); }, 1200);
+  [].slice.call(document.querySelectorAll('input[name="maptab"]')).forEach(function (r) {
+    r.addEventListener('change', function () {
+      var pinMode = document.querySelector('input[name="maptab"]:checked').value === 'pin';
+      $('mapPane').style.display = pinMode ? 'block' : 'none';
+      $('linkPane').style.display = pinMode ? 'none' : 'block';
+      if (pinMode) { initMap(); setTimeout(function () { if (pickMap) pickMap.invalidateSize(); }, 60); }
+      else { if ($('fMap').value.indexOf('maps.google.com/?q=') > -1) $('fMap').value = ''; }
+    });
+  });
+  $('geoBtn').addEventListener('click', function () {
+    var btn = this;
+    if (!navigator.geolocation) { btn.textContent = 'الخدمة غير متاحة — حدد على الخريطة'; return; }
+    btn.textContent = '… جارٍ التحديد';
+    navigator.geolocation.getCurrentPosition(function (p) {
+      initMap();
+      setPin(p.coords.latitude, p.coords.longitude, true);
+      btn.textContent = '📍 تم تحديد الموقع ✓';
+    }, function () { btn.textContent = '📍 تعذر التحديد — اضغط على الخريطة'; });
+  });
+
+  // ---- validation ----
+  function val() {
+    var bad = [];
+    function need(k, ok) { var q = document.querySelector('[data-k="' + k + '"]'); if (!q) return; q.classList.toggle('bad', !ok); if (!ok) bad.push(q); }
+    need('name', $('fName').value.trim().length > 2);
+    need('phone', /^(05|9665|\+9665)[0-9]{8}$/.test($('fPhone').value.replace(/[\s-]/g, '')));
+    need('invoice', $('fInv').value.trim() !== '');
+    need('city', $('fCity').value.trim() !== '');
+    need('map', $('fMap').value.trim().length > 8);
+    ['volt', 'point', 'switch', 'ceiling', 'finishing', 'obstacle', 'ladder'].forEach(function (nm) {
+      need(nm, !!document.querySelector('input[name="' + nm + '"]:checked'));
+    });
+    var sw = document.querySelector('input[name="switch"]:checked');
+    if (sw && sw.value.indexOf('ديمر') > -1) need('dimmerType', $('fDimmer').value.trim() !== '');
+    if (sw && sw.value.indexOf('ذكي') > -1) need('smartSys', $('fSmart').value !== '');
+    var ce = document.querySelector('input[name="ceiling"]:checked');
+    if (ce && ce.value === 'أخرى') need('ceilingOther', $('fCeilO').value.trim() !== '');
+    need('height', $('fH').value !== '' && +$('fH').value > 0);
+    need('notes', $('fNotes').value.trim() !== '');
+    need('ph1', $('f1').files.length === 1); need('ph2', $('f2').files.length === 1); need('ph3', $('f3').files.length === 1);
+    need('agree', $('fAgree').checked);
+    if (bad.length) { bad[0].scrollIntoView === undefined || window.scrollTo({ top: bad[0].getBoundingClientRect().top + window.pageYOffset - 90, behavior: 'smooth' }); }
+    return bad.length === 0;
+  }
+
+  // ---- submit ----
+  frm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!val()) return;
+    var btn = $('btnGo'); btn.disabled = true; btn.textContent = '… جارٍ الإرسال';
+    var bar = $('bar'); bar.style.display = 'block';
+    if (DEMO) { var w = 0, t = setInterval(function () { w += 12; bar.firstElementChild.style.width = Math.min(w, 100) + '%'; if (w >= 100) { clearInterval(t); finish(); } }, 120); return; }
+    var fd = new FormData();
+    fd.append('t', TOKEN);
+    var sw = document.querySelector('input[name="switch"]:checked').value;
+    var ce = document.querySelector('input[name="ceiling"]:checked').value;
+    var data = {
+      name: $('fName').value.trim(), phone: $('fPhone').value.trim(), invoice: $('fInv').value.trim(),
+      city: $('fCity').value.trim(), map: $('fMap').value.trim(),
+      volt: document.querySelector('input[name="volt"]:checked').value,
+      point: document.querySelector('input[name="point"]:checked').value,
+      switch: sw,
+      dimmerType: sw.indexOf('ديمر') > -1 ? $('fDimmer').value.trim() : '',
+      smartSys: sw.indexOf('ذكي') > -1 ? $('fSmart').value : '',
+      ceiling: ce === 'أخرى' ? 'أخرى: ' + $('fCeilO').value.trim() : ce,
+      height: $('fH').value + ' م',
+      finishing: document.querySelector('input[name="finishing"]:checked').value,
+      obstacle: document.querySelector('input[name="obstacle"]:checked').value,
+      ladder: document.querySelector('input[name="ladder"]:checked').value,
+      notes: $('fNotes').value.trim()
+    };
+    fd.append('token', TOKEN);
+    fd.append('data', JSON.stringify(data));
+    fd.append('photo_full', $('f1').files[0]);
+    fd.append('photo_ceiling', $('f2').files[0]);
+    fd.append('photo_power', $('f3').files[0]);
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', API + 'install');
+    xhr.upload.onprogress = function (ev) { if (ev.lengthComputable) bar.firstElementChild.style.width = Math.round(ev.loaded / ev.total * 100) + '%'; };
+    xhr.onload = function () {
+      var d = {}; try { d = JSON.parse(xhr.responseText); } catch (err) {}
+      if (xhr.status === 200 && d.ok) { finish(); }
+      else if (d.used) { showGate('تم إرسال هذا النموذج مسبقًا', 'هذا الرابط استُخدم من قبل.'); }
+      else { btn.disabled = false; btn.textContent = 'إرسال النموذج — حاول مرة أخرى'; bar.style.display = 'none'; alert(d.msg || 'تعذر الإرسال. تحقق من الاتصال وحاول مجددًا.'); }
+    };
+    xhr.onerror = function () { btn.disabled = false; btn.textContent = 'إرسال النموذج — حاول مرة أخرى'; bar.style.display = 'none'; alert('تعذر الاتصال بالخادم. حاول مجددًا.'); };
+    xhr.send(fd);
+  });
+
+  function finish() {
+    frm.style.display = 'none'; done.style.display = 'block'; window.scrollTo(0, 0);
+    var n = 6, el = document.getElementById('cntN');
+    var iv = setInterval(function () {
+      n--; if (el) el.textContent = n;
+      if (n <= 0) { clearInterval(iv); window.location.href = 'https://lightingdesign-ksa.com/'; }
+    }, 1000);
+  }
+})();
+</script>
+</body>
+</html>
