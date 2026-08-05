@@ -5,3 +5,6 @@ dist
 server/data
 server/logs
 .DS_Store
+
+# internal planning docs — not published
+project-compass-spec.md
