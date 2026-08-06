@@ -7,6 +7,8 @@ Two deliverables in one repository: the public marketing site, and an internal
 tool that replaced a paper-and-WhatsApp process for surveying a customer's home
 before an installation crew is dispatched.
 
+![The Lighting Design home page — a gold-leaf pendant suspended in a dark room above the headline "Light, given form."](docs/home.jpg)
+
 | | |
 | --- | --- |
 | **Site** | React 18 · TypeScript · Vite · Tailwind · React Router |
@@ -26,6 +28,9 @@ A dark, typographic showcase built around the product photography.
 - **Gallery** — 22 installation photographs in a masonry grid, filterable by
   fixture type and material, with live text search and a keyboard-navigable
   lightbox.
+
+  ![The gallery page — type and material filter chips above a masonry grid of installation photographs](docs/gallery.jpg)
+
 - **Motion** — Lenis smooth scrolling, scroll-triggered reveals, and a canvas
   particle field, all gated behind `prefers-reduced-motion`.
 - Fully responsive from 390 px phones to wide desktop.
