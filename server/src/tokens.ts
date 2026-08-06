@@ -11,6 +11,14 @@ export interface TokenRecord {
   salesperson: string;
   createdAt: string;
   usedAt?: string;
+  /** Supplied by the salesperson when minting; the form prefills them read-only. */
+  phone?: string;
+  invoice?: string;
+}
+
+export interface MintDetails {
+  phone?: string;
+  invoice?: string;
 }
 
 /**
@@ -34,10 +42,15 @@ async function writeStore(data: Record<string, TokenRecord>): Promise<void> {
   await writeFile(STORE, JSON.stringify(data, null, 2), 'utf8');
 }
 
-export async function mintToken(salesperson: string): Promise<string> {
+export async function mintToken(salesperson: string, details: MintDetails = {}): Promise<string> {
   const token = randomBytes(9).toString('base64url');
   const store = await readStore();
-  store[token] = { salesperson, createdAt: new Date().toISOString() };
+  store[token] = {
+    salesperson,
+    createdAt: new Date().toISOString(),
+    ...(details.phone ? { phone: details.phone } : {}),
+    ...(details.invoice ? { invoice: details.invoice } : {}),
+  };
   await writeStore(store);
   return token;
 }
@@ -48,6 +61,8 @@ export async function inspectToken(token: string) {
     valid: Boolean(record),
     used: Boolean(record?.usedAt),
     salesperson: record?.salesperson,
+    phone: record?.phone,
+    invoice: record?.invoice,
   };
 }
 

@@ -60,7 +60,11 @@ installRouter.post('/token', async (req, res) => {
     res.status(400).json({ error: 'salesperson required' });
     return;
   }
-  const token = await mintToken(salesperson);
+  // Optional. When present the form prefills them and locks the fields, so the
+  // invoice on the report is the one the salesperson quoted, not a retyped one.
+  const phone = String(req.body?.phone ?? '').trim() || undefined;
+  const invoice = String(req.body?.invoice ?? '').trim() || undefined;
+  const token = await mintToken(salesperson, { phone, invoice });
   res.json({ token, url: `${config.publicOrigin}/form/?t=${token}` });
 });
 

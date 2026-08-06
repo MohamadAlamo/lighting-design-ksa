@@ -1,6 +1,7 @@
 import express from 'express';
 import { config } from './config.js';
 import { installRouter } from './routes/install.js';
+import { telegramRouter } from './routes/telegram.js';
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use((req, res, next) => {
 });
 
 app.get('/api/health', (_req, res) => res.json({ ok: true, redirect: config.redirectUrl }));
+app.use('/api', telegramRouter);
 app.use('/api', installRouter);
 
 app.use((_req, res) => res.status(404).json({ error: 'not found' }));

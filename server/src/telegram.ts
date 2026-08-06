@@ -27,6 +27,28 @@ export async function sendMessage(text: string): Promise<void> {
   );
 }
 
+/**
+ * Reply in the chat a command came from, threaded under it. Kept separate from
+ * sendMessage, which always targets the configured install group.
+ */
+export async function replyTo(
+  chatId: number | string,
+  text: string,
+  replyToMessageId?: number,
+): Promise<void> {
+  await call(
+    'sendMessage',
+    JSON.stringify({
+      chat_id: chatId,
+      text,
+      parse_mode: 'HTML',
+      disable_web_page_preview: true,
+      ...(replyToMessageId ? { reply_to_message_id: replyToMessageId } : {}),
+    }),
+    { 'content-type': 'application/json' },
+  );
+}
+
 export async function sendPhoto(file: SendPhotoFile): Promise<void> {
   const form = new FormData();
   form.append('chat_id', config.installChatId);

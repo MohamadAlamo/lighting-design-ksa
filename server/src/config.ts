@@ -35,6 +35,12 @@ export const config = {
   redirectUrl: process.env.REDIRECT_URL ?? 'https://lightingdesign-ksa.com/',
   port: Number(process.env.PORT ?? 8080),
   tokenStore: storePath(),
+  /**
+   * Shared with Telegram via setWebhook; it echoes it back in the
+   * X-Telegram-Bot-Api-Secret-Token header. Without it the webhook URL is the
+   * only thing stopping anyone from posting fake updates, so it is required.
+   */
+  webhookSecret: need('TELEGRAM_WEBHOOK_SECRET'),
   maxFileBytes: 20 * 1024 * 1024,
 } as const;
 
