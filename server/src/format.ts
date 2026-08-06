@@ -42,6 +42,8 @@ export function formatInstallReport(
   return (
     `🔧 <b>نموذج التحقق من موقع التركيب</b>\n` +
     `<code>${meta.reference}</code>\n` +
+    // From the token, not the customer — whoever minted the link owns this lead.
+    `👤 <b>المندوب:</b> ${esc(meta.salesperson ?? '—')}\n` +
     `━━━━━━━━━━━━━━\n` +
     `<b>العميل</b>\n` +
     row('الإسم', survey.fullName) +
@@ -63,7 +65,6 @@ export function formatInstallReport(
     row('يحتاج سلم / معدات', YESNO[survey.ladderNeeded]) +
     `━━━━━━━━━━━━━━\n` +
     row('ملاحظات', survey.notes || '—') +
-    row('المندوب', meta.salesperson ?? '—') +
     `\n✅ أقر العميل بصحة المعلومات`
   );
 }
@@ -108,9 +109,10 @@ export function formatLegacyReport(
   return (
     `🔧 <b>نموذج التحقق من موقع التركيب</b>\n` +
     `<code>${meta.reference}</code>\n` +
+    // From the token, not the customer — whoever minted the link owns this lead.
+    `👤 <b>المندوب:</b> ${esc(meta.salesperson ?? '—')}\n` +
     `━━━━━━━━━━━━━━\n` +
     lines +
-    row('المندوب', meta.salesperson ?? '—') +
     `\n✅ أقر العميل بصحة المعلومات`
   );
 }
