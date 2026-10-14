@@ -1,5 +1,3 @@
-import type { Branch } from '@/types';
-
 export const CONTACT = {
   phone: '+966540537677',
   phoneDisplay: '+966 54 053 7677',
@@ -26,29 +24,3 @@ export const NAV = [
   { label: 'About', href: '#about' },
   { label: 'Showrooms', href: '#visit' },
 ] as const;
-
-export const BRANCHES: Branch[] = [
-  {
-    name: 'Lighting Design (Main)',
-    city: 'Al Khobar',
-    address: 'North Al Khobar, King Khalid Street, Intersection 16',
-    mapUrl:
-      'https://www.google.com/maps/search/?api=1&query=Lighting+Design+King+Khalid+Street+Al+Khobar',
-    hours: 'Sat–Thu · 10:00 – 22:00',
-  },
-  {
-    name: 'Lighting Design +',
-    city: 'Al Bandariyah, Al Khobar',
-    address: 'King Faisal Ibn Abd Al Aziz Road, Al Bandariyah 31952',
-    mapUrl:
-      'https://www.google.com/maps/search/?api=1&query=Lighting+Design+Al+Bandariyah+Al+Khobar',
-    hours: 'Sat–Thu · 10:00 – 22:00',
-  },
-  {
-    name: 'Lighting Design +',
-    city: 'Riyadh',
-    address: 'Al Takhassusi Street, Riyadh',
-    mapUrl: 'https://maps.app.goo.gl/t5qVH1Ysrp1WDvD39',
-    hours: 'Sat–Thu · 10:00 – 22:00',
-  },
-];
