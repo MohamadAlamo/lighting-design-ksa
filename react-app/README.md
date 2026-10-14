@@ -26,38 +26,30 @@ npm run preview  # serve the build locally
 
 ```
 src/
-  components/        Nav, Footer, Floaters, ui primitives, ProjectOverlay, Lightbox
-  components/hero/   Hero, ParticleField, HeroDecor, SplitHeadline
-  sections/          Philosophy, Collections, Pieces, Projects, QuoteBand,
-                     GalleryTeaser, About, Materials, Bespoke, Visit
-  pages/             Home, GalleryPage
-  hooks/             useLenis, useReveal, useParallax, useReducedMotion
-  data/              site, collections, pieces, projects, gallery, team,
-                     materials, heroMarkup
-  types.ts           content models
+  App.tsx            routes: / and /gallery
+  pages/             Home (mounts the legacy page), GalleryPage
+  legacy/            HomeMarkup.tsx, legacy.css, motion.ts — the original
+                     hand-authored home page, ported intact
+  components/        Nav, Footer, Floaters, Lightbox (used by the gallery)
+  hooks/             useLenis, useReveal, useReducedMotion
+  data/              site (contact, socials, nav), gallery
+  types.ts           gallery content model
 @shared             → server/src/contract.ts (API request/response contract)
 ```
 
+## The home page
+
+The home page is the original markup carried over as-is: `HomeMarkup.tsx`
+renders it, and `mountLegacyMotion()` from `motion.ts` drives the hero slider,
+intro sequence, particles, scroll reveals, parallax, pinned projects,
+lightboxes, menu and counters. Both files are a verbatim port — edit content in
+`HomeMarkup.tsx`, but don't restructure them by hand.
+
 ## Motion
 
-Every effect is opt-out under `prefers-reduced-motion`:
-
-| Effect | Where |
-| --- | --- |
-| Smooth scroll (ease-out cubic, 1.15s) | `useLenis` |
-| Ambient warm motes, density by viewport area | `ParticleField` (hero slide 1 only) |
-| Word-mask headline reveal (115% → 0, staggered) | `SplitHeadline` |
-| Fade + rise on scroll, 90ms child stagger | `useReveal` (`data-reveal`, `data-stagger`) |
-| Clip-path wipe | `useReveal` (`data-wipe`) |
-| Parallax photo layers | `useParallax` (`data-speed`) |
-| Pinned project reel | `sections/Projects.tsx` (wide screens only) |
-
-### heroMarkup.ts
-
-Hero slides 2 and 3 are hand-tuned absolute compositions (17 suspended glass
-leaves on cables; 8 cut-crystal objets with captions). They are carried over as
-markup and animated by reference in `HeroDecor` — do not re-flow them by hand;
-adjust positions in that file.
+All motion is skipped under `prefers-reduced-motion`. Smooth scrolling is Lenis,
+set up app-wide in `App.tsx` via `useLenis`; the gallery page's scroll reveals use
+`useReveal` (`data-reveal`, `data-stagger`).
 
 ## Assets
 
